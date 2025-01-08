@@ -35,3 +35,36 @@ def register_admin_handlers(bot: TeleBot):
                 message, f"Task assigned to @{username}: {description}")
         finally:
             session.close()
+
+    @bot.message_handler(commands=["update_members"])
+    def update_members(message: Message):
+        session = SessionLocal()
+        try:
+            if not is_admin(message.from_user.id, session):
+                bot.reply_to(message, "Unauthorized access.")
+                return
+
+            # Fetch all members of the group
+            chat_members = bot.get_chat_administrators(message.chat.id)
+            added_users = 0
+            for member in chat_members:
+                user = session.query(User).filter_by(
+                    user_id=member.user.id).first()
+                if not user:
+                    print(f"new user : {member.user.username}")
+                    new_user = User(
+                        user_id=member.user.id,
+                        username=member.user.username or member.user.first_name,
+                        is_admin=member.status == "administrator" or member.status == "creator",
+                    )
+                    session.add(new_user)
+                    added_users += 1
+
+            session.commit()
+            bot.reply_to(
+                message, f"Database updated. {added_users} new members added."
+            )
+        except Exception as e:
+            bot.reply_to(message, f"Error updating members: {e}")
+        finally:
+            session.close()
