@@ -1,6 +1,6 @@
 from telebot import TeleBot
 from telebot.types import Message
-from src.db.models import SessionLocal, Task, TaskStatus
+from src.db.models import SessionLocal, Task
 from src.utils import update_task_status
 
 
@@ -17,8 +17,10 @@ def register_user_handlers(bot: TeleBot):
                 return
 
             response = "\n".join(
-                [f"{i+1}. {task.task_description} - {task.status.value}" for i,
-                    task in enumerate(tasks)]
+                [
+                    f"{i+1}. {task.task_description} - {task.status.value}"
+                    for i, task in enumerate(tasks)
+                ]
             )
             bot.reply_to(message, response)
         finally:
@@ -31,19 +33,16 @@ def register_user_handlers(bot: TeleBot):
             args = message.text.split(" ", 2)
             if len(args) < 3:
                 bot.reply_to(
-                    message, "Usage: /update_status <task_id> <new_status>")
+                    message, "Usage: /update_status <task_id> <new_status>"
+                )
                 return
 
-            task_id = int(args[1])
+            task_id = args[1]
             new_status = args[2].lower()
 
-            task = session.query(Task).filter_by(id=task_id).first()
-            if not task or new_status not in TaskStatus.__members__:
+            if update_task_status(task_id, new_status, session):
+                bot.reply_to(message, "Task status updated successfully!")
+            else:
                 bot.reply_to(message, "Invalid task ID or status.")
-                return
-
-            task.status = TaskStatus[new_status.upper()]
-            session.commit()
-            bot.reply_to(message, f"Task status updated to {new_status}.")
         finally:
             session.close()
