@@ -115,35 +115,16 @@ The API will be available at: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 
 ## Containerization with Docker
 
-### Build the Docker Image
+### Build and Run with Docker Compose
+
+Since we are using Docker Compose, we don't need to manually build or run the containers. Docker Compose will handle both tasks for us. Follow these steps:
+
+### Build and Run the Docker Containers
 ```bash
-docker build -t telegram-task-bot .
+docker-compose up --build
 ```
 
-### Run the Docker Container
-```bash
-docker run -d -p 8000:8000 --env-file config/.env telegram-task-bot
-```
 
-## Free Hosting Options
-You can deploy the bot and API using platforms like:
-- [Render](https://render.com/)
-- [Railway](https://railway.app/)
-
-Refer to their documentation for detailed deployment instructions.
-
-## Logging
-To enable logging for critical actions and errors, logs are written to both the console and a file:
-
-- **Location:** `logs/bot.log`
-- **Log Level:** INFO, ERROR
-
-## Future Enhancements
-1. Add unit and integration tests.
-2. Implement OAuth or JWT for API authentication.
-3. Add rate-limiting for the API to prevent abuse.
-
----
 
 For any questions or issues, feel free to reach out at [adiiiverma.2003@gmail.com].
 
