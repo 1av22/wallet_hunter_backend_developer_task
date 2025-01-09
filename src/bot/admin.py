@@ -9,7 +9,8 @@ def register_admin_handlers(bot: TeleBot):
     def assign_task(message: Message):
         session = SessionLocal()
         try:
-            if not is_admin(message.from_user.id, session):
+            if not is_admin(message.from_user.username, session):
+                print(message.from_user)
                 bot.reply_to(message, "Unauthorized access.")
                 return
 
