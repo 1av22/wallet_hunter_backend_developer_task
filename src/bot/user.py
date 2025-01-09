@@ -41,7 +41,7 @@ def register_user_handlers(bot: TeleBot):
                 return
 
             try:
-                task_id = int(args[1])  # Ensure task_id is an integer
+                task_id = int(args[1])
             except ValueError:
                 bot.reply_to(
                     message, "Invalid task ID. Please enter a valid number.")

@@ -13,11 +13,8 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 bot = TeleBot(BOT_TOKEN)
 
-# Register command handlers from separate modules
 register_admin_handlers(bot)
 register_user_handlers(bot)
-
-# Function to add bot admin if needed (directly, without async)
 
 
 def add_bot_admin():
@@ -26,7 +23,6 @@ def add_bot_admin():
         admin_user_id = 1219117288
         admin_username = "MeDontHaveAUsername"
 
-        # Check if the bot admin exists in the database
         existing_user = session.query(User).filter_by(
             user_id=admin_user_id).first()
         if not existing_user:
@@ -63,5 +59,5 @@ def help_command(message):
 
 if __name__ == "__main__":
     print("Bot is running...")
-    add_bot_admin()  # Add bot admin at startup
+    add_bot_admin()
     bot.infinity_polling()

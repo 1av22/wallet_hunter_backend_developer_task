@@ -75,6 +75,45 @@ uvicorn src.api.main:app --reload
 
 The API will be available at: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
+## Bot Commands
+
+### Admin Commands
+
+#### `/admin_assign @username Task Description`
+- **Description:** Assign a task to a user.
+- **Usage:** 
+  - `/admin_assign @john_doe Complete the report`
+- **Response:** 
+  - `"Task assigned to @john_doe: Complete the report"`
+
+### User Commands
+
+#### `/user_tasks`
+- **Description:** List all tasks assigned to the user.
+- **Response:**
+  - `"1. Complete the report - PENDING"`
+  - `"2. Review project - IN-PROGRESS"`
+
+#### `/update_status <task_id> <new_status>`
+- **Description:** Update the status of a task.
+- **Usage:** 
+  - `/update_status 1 IN_PROGRESS`
+- **Response:** 
+  - `"Task status updated successfully!"`
+  - **Error:** `"Invalid task ID or status."`
+
+#### `/add`
+- **Description:** Add a new user to the database (executed automatically for new users).
+- **Response:**
+  - `"User john_doe added successfully. Admin: False"`
+
+#### `/help`
+- **Description:** Show the list of available commands.
+- **Response:**
+  - `"Available Commands:\n/admin_assign\n/user_tasks\n/update_status"`
+
+
+
 ## API Documentation
 
 ### Endpoints
