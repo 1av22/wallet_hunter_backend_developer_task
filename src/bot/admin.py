@@ -2,6 +2,9 @@ from telebot import TeleBot
 from telebot.types import Message
 from src.db.models import SessionLocal, Task, User
 from src.utils import is_admin
+from src.utils import setup_logger
+
+logger = setup_logger("bot", "logs/admin.log")
 
 
 def register_admin_handlers(bot: TeleBot):
@@ -32,6 +35,8 @@ def register_admin_handlers(bot: TeleBot):
                         task_description=description)
             session.add(task)
             session.commit()
+
+            logger.info(f"Task assigned to @{username}: {description}")
             bot.reply_to(
                 message, f"Task assigned to @{username}: {description}")
         finally:

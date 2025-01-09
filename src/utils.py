@@ -1,5 +1,7 @@
+import logging
 from sqlalchemy.orm import Session
 from src.db.models import User, Task, TaskStatus
+import os
 
 
 def is_admin(username: int, session: Session) -> bool:
@@ -26,3 +28,21 @@ def update_task_status(task_id: int, new_status: str, session: Session) -> bool:
     task.status = TaskStatus[normalized_status]
     session.commit()
     return True
+
+
+def setup_logger(name: str, log_file: str, level=logging.INFO):
+    # Create the logs directory if it doesn't exist
+    log_dir = os.path.dirname(log_file)
+    if not os.path.exists(log_dir) and log_dir != '':
+        os.makedirs(log_dir)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    file_handler = logging.FileHandler(log_file)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    return logger

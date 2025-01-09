@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 from src.bot.admin import register_admin_handlers
 from src.bot.user import register_user_handlers
 from src.db.models import SessionLocal, User
+from src.utils import setup_logger
+
+logger = setup_logger("bot", "logs/bot.log")
 
 load_dotenv()
 
@@ -34,8 +37,10 @@ def add_bot_admin():
             )
             session.add(new_user)
             session.commit()
+            logger.info(f"Admin {admin_username} added to the database.")
             print(f"Admin {admin_username} added to the database.")
     except Exception as e:
+        logger.error(f"Error adding admin: {e}")
         print(f"Error adding admin: {e}")
     finally:
         session.close()

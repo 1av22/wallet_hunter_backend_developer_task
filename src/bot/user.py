@@ -2,6 +2,9 @@ from telebot import TeleBot
 from telebot.types import Message
 from src.db.models import SessionLocal, Task, User
 from src.utils import update_task_status
+from src.utils import setup_logger
+
+logger = setup_logger("user", "logs/user.log")
 
 
 def register_user_handlers(bot: TeleBot):
@@ -46,11 +49,15 @@ def register_user_handlers(bot: TeleBot):
 
             new_status = args[2].strip().upper()
 
+            logger.info(f"User {message.from_user.username} requested to update task {
+                        task_id} status to {new_status}")
             print(f"Task ID: {task_id}, New Status: {new_status}")
 
             if update_task_status(task_id, new_status, session):
+                logger.info(f"Task {task_id} status updated successfully.")
                 bot.reply_to(message, "Task status updated successfully!")
             else:
+                logger.error(f"Error updating task {task_id} status.")
                 bot.reply_to(message, "Invalid task ID or status.")
         finally:
             session.close()
@@ -59,11 +66,9 @@ def register_user_handlers(bot: TeleBot):
     def add_user(message: Message):
         session = SessionLocal()
         try:
-            # Retrieve user details from the message
             user_id = message.from_user.id
             username = message.from_user.username or f"user_{user_id}"
 
-            # Check if the user is already in the database
             existing_user = session.query(
                 User).filter_by(user_id=user_id).first()
             if existing_user:
@@ -71,16 +76,15 @@ def register_user_handlers(bot: TeleBot):
                              username} is already in the database.")
                 return
 
-            # Determine if the user is an admin
-            # (This is an example; replace it with your logic to check admin status)
-            # True if in a private chat, for example
             is_admin = message.chat.type == "private"
 
-            # Add the user to the database
             new_user = User(user_id=user_id, username=username,
                             is_admin=is_admin)
             session.add(new_user)
             session.commit()
+
+            logger.info(
+                f"User {username} added successfully. Admin: {is_admin}")
 
             bot.reply_to(message, f"User {
                          username} added successfully. Admin: {is_admin}")
